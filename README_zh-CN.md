@@ -102,7 +102,12 @@ node build.mjs --skip-frontend --skip-backend    # 只重打 Electron 壳
 
 ## 📊 项目统计
 
-[![Star History Chart](https://api.star-history.com/svg?repos=wangruichuan%2Fchemagent&type=Date)](https://star-history.com/#wangruichuan/ChemAgent&Date)
+[![Stars](https://img.shields.io/github/stars/wangruichuan/chemagent?style=for-the-badge&logo=github&color=2e7d5b&labelColor=2e7d5b)](https://github.com/wangruichuan/ChemAgent/stargazers)
+[![Forks](https://img.shields.io/github/forks/wangruichuan/chemagent?style=for-the-badge&logo=github&color=2e7d5b&labelColor=2e7d5b)](https://github.com/wangruichuan/ChemAgent/forks)
+[![Watchers](https://img.shields.io/github/watchers/wangruichuan/chemagent?style=for-the-badge&logo=github&color=2e7d5b&labelColor=2e7d5b)](https://github.com/wangruichuan/ChemAgent/watchers)
+[![Contributors](https://img.shields.io/github/contributors/wangruichuan/chemagent?style=for-the-badge&logo=github&color=2e7d5b&labelColor=2e7d5b)](https://github.com/wangruichuan/ChemAgent/graphs/contributors)
+
+访问 **[wangruichuan/ChemAgent](https://github.com/wangruichuan/ChemAgent)** 查看最新数据。
 
 ## 🤝 参与贡献
 

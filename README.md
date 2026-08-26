@@ -104,7 +104,12 @@ Output: `desktop/release/ChemAgent Setup <ver>.exe` (NSIS installer) and `win-un
 
 ## 📊 Project Stats
 
-[![Star History Chart](https://api.star-history.com/svg?repos=wangruichuan%2Fchemagent&type=Date)](https://star-history.com/#wangruichuan/ChemAgent&Date)
+[![Stars](https://img.shields.io/github/stars/wangruichuan/chemagent?style=for-the-badge&logo=github&color=2e7d5b&labelColor=2e7d5b)](https://github.com/wangruichuan/ChemAgent/stargazers)
+[![Forks](https://img.shields.io/github/forks/wangruichuan/chemagent?style=for-the-badge&logo=github&color=2e7d5b&labelColor=2e7d5b)](https://github.com/wangruichuan/ChemAgent/forks)
+[![Watchers](https://img.shields.io/github/watchers/wangruichuan/chemagent?style=for-the-badge&logo=github&color=2e7d5b&labelColor=2e7d5b)](https://github.com/wangruichuan/ChemAgent/watchers)
+[![Contributors](https://img.shields.io/github/contributors/wangruichuan/chemagent?style=for-the-badge&logo=github&color=2e7d5b&labelColor=2e7d5b)](https://github.com/wangruichuan/ChemAgent/graphs/contributors)
+
+Visit **[wangruichuan/ChemAgent](https://github.com/wangruichuan/ChemAgent)** for the latest stats.
 
 ## 🤝 Contributing
 
