@@ -3,6 +3,7 @@ import { ArrowUpIcon, CpuIcon, Loader2Icon, SquareIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useT } from "@/lib/i18n"
 import type { ApiSettings, ChatMessage } from "@/types"
 
 function estimateTokens(text: string): number {
@@ -44,6 +45,7 @@ export function ChatInput({
 }: Props) {
   const [value, setValue] = useState("")
   const ref = useRef<HTMLTextAreaElement>(null)
+  const t = useT()
 
   const ctx = settings.contextLength
   const used =
@@ -108,7 +110,7 @@ export function ChatInput({
             submit()
           }
         }}
-        placeholder={disabled ? "请先在设置中配置 API Key" : "输入消息，Enter 发送，Shift+Enter 换行"}
+        placeholder={disabled ? t("input.needKey") : t("input.placeholder")}
         disabled={disabled}
         rows={1}
         className="max-h-60 w-full resize-none bg-transparent px-4 pt-3.5 pb-1 text-[15px] leading-6 outline-none placeholder:text-muted-foreground/60 disabled:cursor-not-allowed"
@@ -120,11 +122,11 @@ export function ChatInput({
             <button
               onClick={onOpenSettings}
               disabled={isStreaming}
-              title="模型设置"
+              title={t("settings.title")}
               className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[11px] font-medium leading-none text-muted-foreground transition-colors hover:border-[var(--jade)]/40 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
             >
               <CpuIcon className="size-3 shrink-0" />
-              <span className="max-w-[140px] truncate">{settings.model || "未配置模型"}</span>
+              <span className="max-w-[140px] truncate">{settings.model || t("input.noModel")}</span>
             </button>
           )}
           {/* 知识库检索开关：主动开启时对话才检索知识库 */}
@@ -137,7 +139,7 @@ export function ChatInput({
                 ? "border-[var(--jade)]/40 bg-[var(--jade-soft)] text-[var(--jade)]"
                 : "border-border text-muted-foreground hover:text-foreground"
             )}
-            title="知识库检索：开启后每次提问自动检索知识库，基于资料回答"
+            title={t("input.kbTitle")}
           >
             <span
               className={cn(
@@ -145,11 +147,11 @@ export function ChatInput({
                 settings.useKb ? "bg-[var(--jade)]" : "bg-muted-foreground/40"
               )}
             />
-            知识库检索
+            {t("input.kbRetrieve")}
           </button>
 
           <span className="truncate text-muted-foreground/70">
-            {isStreaming ? (thinking ? "正在思考…" : "正在生成…") : ""}
+            {isStreaming ? (thinking ? t("msg.thinking") : t("input.generating")) : ""}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -159,7 +161,7 @@ export function ChatInput({
               size="icon-sm"
               variant="secondary"
               onClick={onStop}
-              title={thinking ? "停止思考" : "停止生成"}
+              title={thinking ? t("input.stopThinking") : t("input.stopGenerating")}
               className="rounded-full"
             >
               {thinking ? (
@@ -173,7 +175,7 @@ export function ChatInput({
               size="icon-sm"
               onClick={submit}
               disabled={!value.trim() || disabled}
-              title="发送"
+              title={t("input.send")}
               className="rounded-full bg-[var(--jade)] text-white transition-all duration-200 hover:scale-110 hover:opacity-90 active:scale-90 active:transition-transform active:duration-75 disabled:scale-100 disabled:opacity-30"
             >
               {disabled ? <Loader2Icon className="size-4 animate-spin" /> : <ArrowUpIcon className="size-4" />}

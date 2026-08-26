@@ -1,20 +1,9 @@
 import { FileTextIcon, ListOrderedIcon, RefreshCwIcon, SendIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useT } from "@/lib/i18n"
 
 export type SelectionAction = "explain" | "rewrite" | "summarize" | "send"
-
-/** 各动作：标签 + 图标 + 把选中文本组装成提问前缀 */
-const ACTIONS: {
-  key: SelectionAction
-  label: string
-  icon: typeof FileTextIcon
-}[] = [
-  { key: "explain", label: "解释", icon: FileTextIcon },
-  { key: "rewrite", label: "改写", icon: RefreshCwIcon },
-  { key: "summarize", label: "总结", icon: ListOrderedIcon },
-  { key: "send", label: "发给 ChemAgent", icon: SendIcon },
-]
 
 /** 把选中文本 + 动作拼成发给模型的完整提问 */
 export function selectionPrompt(action: SelectionAction, text: string): string {
@@ -41,6 +30,13 @@ interface Props {
 
 /** beautifului.dev #15 Selection Actions —— 选中文本后浮现的浮动操作条 */
 export function SelectionActionsPopover({ x, y, text, onPick }: Props) {
+  const t = useT()
+  const ACTIONS: { key: SelectionAction; label: string; icon: typeof FileTextIcon }[] = [
+    { key: "explain", label: t("sel.explain"), icon: FileTextIcon },
+    { key: "rewrite", label: t("sel.rewrite"), icon: RefreshCwIcon },
+    { key: "summarize", label: t("sel.summarize"), icon: ListOrderedIcon },
+    { key: "send", label: t("sel.sendToAgent"), icon: SendIcon },
+  ]
   return (
     <div
       data-sel-actions

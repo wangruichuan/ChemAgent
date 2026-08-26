@@ -1,5 +1,6 @@
 import { useRef, useState } from "react"
 import {
+  LanguagesIcon,
   LibraryBigIcon,
   ListTodoIcon,
   MoonIcon,
@@ -35,6 +36,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { useI18n, useT } from "@/lib/i18n"
 import type { Conversation } from "@/types"
 
 interface Props {
@@ -65,14 +67,8 @@ interface ToolEntry {
   comingSoon?: boolean
 }
 
-const TOOLS: ToolEntry[] = [
-  { id: "knowledge", label: "知识库", icon: LibraryBigIcon, badge: "资料" },
-  { id: "automation", label: "自动化", icon: WorkflowIcon, badge: "待上线", comingSoon: true },
-  { id: "skills", label: "技能", icon: PuzzleIcon, badge: "管理" },
-]
-
 /** 相对日期：今天显示时间，昨天显示"昨天"，一周内显示周几，更早显示月日 */
-function relativeDate(ts: number): string {
+function relativeDate(ts: number, t: (k: string) => string): string {
   const now = new Date()
   const d = new Date(ts)
   const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
@@ -81,9 +77,14 @@ function relativeDate(ts: number): string {
   if (days <= 0) {
     return d.toTimeString().slice(0, 5) // HH:mm
   }
-  if (days === 1) return "昨天"
-  if (days <= 7) return "周" + "日一二三四五六"[d.getDay()]
-  return `${d.getMonth() + 1}月${d.getDate()}日`
+  if (days === 1) return t("date.yesterday")
+  if (days <= 7) {
+    const chars = t("date.weekChars") // zh: 日一二三四五六；en: SunMonTueWedThuFriSat
+    const w = d.getDay()
+    const len = chars.length === 7 ? 1 : 3
+    return chars.slice(w * len, w * len + len)
+  }
+  return `${d.getMonth() + 1}${t("date.month")}${d.getDate()}${t("date.day")}`
 }
 
 export function Sidebar({
@@ -100,6 +101,13 @@ export function Sidebar({
   theme,
   onToggleTheme,
 }: Props) {
+  const { lang, toggleLang } = useI18n()
+  const t = useT()
+  const TOOLS: ToolEntry[] = [
+    { id: "knowledge", label: t("sidebar.knowledge"), icon: LibraryBigIcon, badge: t("sidebar.knowledgeBadge") },
+    { id: "automation", label: t("sidebar.automation"), icon: WorkflowIcon, badge: t("sidebar.automationBadge"), comingSoon: true },
+    { id: "skills", label: t("sidebar.skills"), icon: PuzzleIcon, badge: t("sidebar.skillsBadge") },
+  ]
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
   const [activeTool, setActiveTool] = useState<string | null>(null)
@@ -143,14 +151,14 @@ export function Sidebar({
           onClick={onNew}
         >
           <PlusIcon className="size-4 shrink-0" />
-          新建任务
+          {t("sidebar.newTask")}
         </Button>
       </div>
 
       {/* 工具区 */}
       <div className="shrink-0 px-3 pb-3">
         <div className="flex items-center justify-between px-2 pb-1.5">
-          <span className="text-[11px] font-medium text-muted-foreground/70">工具</span>
+          <span className="text-[11px] font-medium text-muted-foreground/70">{t("sidebar.tools")}</span>
           <span className="rounded border border-border/60 px-1 py-px font-mono text-[9px] text-muted-foreground/50">
             TOOLS
           </span>
@@ -206,7 +214,7 @@ export function Sidebar({
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="flex items-center justify-between px-5 pt-3 pb-1.5">
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-medium text-muted-foreground/70">任务</span>
+            <span className="text-[11px] font-medium text-muted-foreground/70">{t("sidebar.tasks")}</span>
             <span className="rounded border border-border/60 px-1 py-px font-mono text-[9px] text-muted-foreground/50">
               {conversations.length}
             </span>
@@ -215,11 +223,11 @@ export function Sidebar({
             {conversations.length > 0 && (
               <button
                 onClick={() => setClearOpen(true)}
-                title="清空全部任务"
+                title={t("sidebar.clearAll")}
                 className="flex cursor-pointer items-center gap-1 rounded border border-border/60 px-1.5 py-px font-mono text-[9px] text-muted-foreground/50 transition-colors hover:border-red-900/40 hover:text-red-400"
               >
                 <Trash2Icon className="size-2.5" />
-                清空全部
+                {t("sidebar.clearAll")}
               </button>
             )}
             <button
@@ -230,7 +238,7 @@ export function Sidebar({
                   return next
                 })
               }
-              title="搜索任务"
+              title={t("sidebar.search")}
               className={cn(
                 "flex size-6 cursor-pointer items-center justify-center rounded-md transition-colors",
                 searchOpen ? "bg-accent text-accent-foreground" : "text-muted-foreground/50 hover:bg-accent/60 hover:text-foreground"
@@ -249,7 +257,7 @@ export function Sidebar({
                 ref={searchInputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="搜索任务…"
+                placeholder={t("sidebar.searchPlaceholder")}
                 className="w-full rounded-lg border border-border/60 bg-muted/30 py-1.5 pr-6 pl-7 text-xs outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-[var(--jade)]/40"
               />
               <button
@@ -257,7 +265,7 @@ export function Sidebar({
                   setQuery("")
                   setSearchOpen(false)
                 }}
-                title="关闭搜索"
+                title={t("sidebar.closeSearch")}
                 className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-muted-foreground/40 transition-colors hover:text-foreground"
               >
                 <XIcon className="size-3.5" />
@@ -269,7 +277,7 @@ export function Sidebar({
         <div className="flex-1 overflow-y-auto px-3 pb-2">
           {filtered.length === 0 ? (
             <div className="px-2 py-6 text-center text-[11px] text-muted-foreground/40">
-              {query ? "未找到匹配的任务" : "暂无任务，点击上方「新任务」开始"}
+              {query ? t("sidebar.noMatch") : t("sidebar.noTasks")}
             </div>
           ) : (
             filtered.map((conv, i) => {
@@ -316,7 +324,7 @@ export function Sidebar({
                 )}
                 {editingId !== conv.id && (
                   <span className="shrink-0 font-mono text-[10px] text-muted-foreground/40">
-                    {relativeDate(conv.updatedAt)}
+                    {relativeDate(conv.updatedAt, t)}
                   </span>
                 )}
                 <DropdownMenu>
@@ -338,7 +346,7 @@ export function Sidebar({
                       }}
                     >
                       {conv.pinned ? <PinOffIcon /> : <PinIcon />}
-                      {conv.pinned ? "取消置顶" : "置顶"}
+                      {conv.pinned ? t("sidebar.unpin") : t("sidebar.pin")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={(e) => {
@@ -348,7 +356,7 @@ export function Sidebar({
                       }}
                     >
                       <PencilIcon />
-                      重命名
+                      {t("sidebar.rename")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       variant="destructive"
@@ -358,7 +366,7 @@ export function Sidebar({
                       }}
                     >
                       <Trash2Icon />
-                      删除
+                      {t("sidebar.delete")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -369,7 +377,7 @@ export function Sidebar({
             })
           )}
         </div>
-      </div>      {/* 底部：设置 + 主题切换 */}
+      </div>      {/* 底部：设置 + 主题 + 语言 */}
       <div className="shrink-0 rounded-b-2xl border-t bg-card p-2.5">
         <div className="flex items-center gap-1">
           <button
@@ -377,11 +385,18 @@ export function Sidebar({
             className="flex flex-1 cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm leading-none text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
           >
             <SettingsIcon className="size-4 shrink-0" />
-            <span>设置</span>
+            <span>{t("sidebar.settings")}</span>
+          </button>
+          <button
+            onClick={toggleLang}
+            title={lang === "zh" ? t("sidebar.langToEn") : t("sidebar.langToZh")}
+            className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-[10px] font-semibold text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
+          >
+            <LanguagesIcon className="size-4" />
           </button>
           <button
             onClick={onToggleTheme}
-            title={theme === "dark" ? "切换到浅色" : "切换到暗色"}
+            title={theme === "dark" ? t("sidebar.themeToLight") : t("sidebar.themeToDark")}
             className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
           >
             {theme === "dark" ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
@@ -393,14 +408,14 @@ export function Sidebar({
       <Dialog open={clearOpen} onOpenChange={setClearOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>清空全部任务？</DialogTitle>
+            <DialogTitle>{t("sidebar.clearAllTitle")}</DialogTitle>
             <DialogDescription>
-              将删除全部 {conversations.length} 个任务及其对话记录，此操作不可撤销。
+              {t("sidebar.clearAllDesc").replace("{count}", String(conversations.length))}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setClearOpen(false)}>
-              取消
+              {t("common.cancel")}
             </Button>
             <Button
               variant="destructive"
@@ -409,7 +424,7 @@ export function Sidebar({
                 setClearOpen(false)
               }}
             >
-              确认清空
+              {t("common.confirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

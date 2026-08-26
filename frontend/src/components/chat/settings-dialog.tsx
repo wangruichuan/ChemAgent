@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import { useT } from "@/lib/i18n"
 import { DEFAULT_SETTINGS, type ApiSettings } from "@/types"
 
 interface Props {
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function SettingsDialog({ open, onOpenChange, settings, onSave }: Props) {
+  const t = useT()
   const [draft, setDraft] = useState<ApiSettings>(settings)
   const [fetchingModels, setFetchingModels] = useState(false)
   const [models, setModels] = useState<string[]>([])
@@ -74,7 +76,7 @@ export function SettingsDialog({ open, onOpenChange, settings, onSave }: Props) 
     >
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>模型设置</DialogTitle>
+          <DialogTitle>{t("settings.title")}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4">
@@ -100,13 +102,13 @@ export function SettingsDialog({ open, onOpenChange, settings, onSave }: Props) 
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="model">模型名称</Label>
+            <Label htmlFor="model">{t("settings.model")}</Label>
             <div className="flex items-center gap-2">
               <Input
                 id="model"
                 value={draft.model}
                 onChange={(e) => set("model", e.target.value)}
-                placeholder="模型名称"
+                placeholder={t("settings.modelPlaceholder")}
                 list="model-list"
               />
               <datalist id="model-list">
@@ -116,24 +118,28 @@ export function SettingsDialog({ open, onOpenChange, settings, onSave }: Props) 
               </datalist>
               <Button variant="outline" onClick={fetchModels} disabled={fetchingModels} className="shrink-0">
                 {fetchingModels ? <Loader2Icon className="size-4 animate-spin" /> : <RefreshCwIcon className="size-4" />}
-                获取列表
+                {t("settings.fetchModels")}
               </Button>
             </div>
             {fetchError && <p className="text-xs text-destructive">{fetchError}</p>}
-            {models.length > 0 && <p className="text-xs text-muted-foreground">共 {models.length} 个模型，输入框可下拉选择</p>}
+            {models.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {t("settings.modelsHint").replace("{count}", String(models.length))}
+              </p>
+            )}
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="ctx">上下文长度（可选）</Label>
+            <Label htmlFor="ctx">{t("settings.ctx")}</Label>
             <Input
               id="ctx"
               type="number"
               min={0}
               value={draft.contextLength ?? ""}
               onChange={(e) => set("contextLength", e.target.value ? Number(e.target.value) : undefined)}
-              placeholder="例如 128000"
+              placeholder="128000"
             />
-            <p className="text-xs text-muted-foreground">留空则不显示，仅用于界面信息展示</p>
+            <p className="text-xs text-muted-foreground">{t("settings.ctxHint")}</p>
           </div>
 
           {/* 开发者选项 */}
@@ -145,7 +151,7 @@ export function SettingsDialog({ open, onOpenChange, settings, onSave }: Props) 
             >
               <span className="flex items-center gap-2 text-xs font-medium text-foreground/80">
                 <TerminalSquareIcon className="size-3.5 text-muted-foreground/60" />
-                开发者选项
+                {t("settings.dev")}
               </span>
               <ChevronDownIcon
                 className={cn(
@@ -160,9 +166,9 @@ export function SettingsDialog({ open, onOpenChange, settings, onSave }: Props) 
                 <div className="grid gap-2">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <Label>自动压缩上下文</Label>
+                      <Label>{t("settings.autoCompress")}</Label>
                       <p className="text-xs text-muted-foreground">
-                        上下文超过阈值时，把较早轮次压成摘要，避免长对话撑爆上下文
+                        {t("settings.autoCompressDesc")}
                       </p>
                     </div>
                     <button
@@ -185,7 +191,7 @@ export function SettingsDialog({ open, onOpenChange, settings, onSave }: Props) 
                   </div>
                   {draft.autoCompress && (
                     <div className="grid gap-1.5">
-                      <Label htmlFor="compress-threshold">压缩触发阈值（估算 token）</Label>
+                      <Label htmlFor="compress-threshold">{t("settings.compressThreshold")}</Label>
                       <Input
                         id="compress-threshold"
                         type="number"
@@ -193,10 +199,10 @@ export function SettingsDialog({ open, onOpenChange, settings, onSave }: Props) 
                         step={1000}
                         value={draft.compressThreshold}
                         onChange={(e) => set("compressThreshold", Number(e.target.value) || 12000)}
-                        placeholder="例如 12000"
+                        placeholder="12000"
                       />
                       <p className="text-xs text-muted-foreground">
-                        最近 {draft.keepRecent} 条消息始终保留不压缩；阈值越小压缩越早。
+                        {t("settings.compressHint").replace("{count}", String(draft.keepRecent))}
                       </p>
                     </div>
                   )}
@@ -204,17 +210,17 @@ export function SettingsDialog({ open, onOpenChange, settings, onSave }: Props) 
 
                 {/* 系统提示词 */}
                 <div className="grid gap-2">
-                  <Label htmlFor="sys-prompt">系统提示词（System Prompt）</Label>
+                  <Label htmlFor="sys-prompt">{t("settings.systemPrompt")}</Label>
                   <Textarea
                     id="sys-prompt"
                     value={draft.systemPrompt}
                     onChange={(e) => set("systemPrompt", e.target.value)}
-                    placeholder="例如：你是 ChemAgent，一个专注化学科研的 AI 助手…"
+                    placeholder={t("settings.systemPromptPlaceholder")}
                     rows={4}
                     className="resize-y font-mono text-xs leading-5"
                   />
                   <p className="text-xs text-muted-foreground">
-                    每轮请求作为 system 消息发给模型；留空则不发送。可用来设定角色、行为规则。
+                    {t("settings.systemPromptDesc")}
                   </p>
                 </div>
               </div>
@@ -224,10 +230,10 @@ export function SettingsDialog({ open, onOpenChange, settings, onSave }: Props) 
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="ghost" onClick={() => setDraft({ ...DEFAULT_SETTINGS })}>
-            重置
+            {t("settings.reset")}
           </Button>
           <Button onClick={save} className="bg-[var(--jade)] text-white transition-all hover:opacity-90">
-            保存
+            {t("settings.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -15,8 +15,10 @@ import { ArtifactPanel } from "@/components/chat/artifact-panel"
 import { Button } from "@/components/ui/button"
 import { useChat } from "@/hooks/use-chat"
 import { useWorkspace } from "@/hooks/use-workspace"
+import { useT } from "@/lib/i18n"
 
 export default function App() {
+  const t = useT()
   const workspace = useWorkspace()
   const workspaceId = workspace.ws?.current ?? ""
   const chat = useChat(workspaceId)
@@ -194,10 +196,10 @@ export default function App() {
                 </div>
                 <div className="reveal" style={{ animationDelay: "80ms" }}>
                   <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground/95">
-                    有什么可以帮你的？
+                    {t("app.empty.title")}
                   </h1>
                   <p className="mt-3 text-sm text-muted-foreground/70">
-                    化学科研智能体 · 检索、推理、规划与执行，一体完成
+                    {t("app.empty.subtitle2")}
                   </p>
                 </div>
                 {!configured && (
@@ -206,7 +208,7 @@ export default function App() {
                     className="reveal mt-2 rounded-full border border-[var(--jade)]/30 bg-[var(--jade)]/10 px-4 py-2 text-sm font-medium text-[var(--jade)] transition-colors hover:bg-[var(--jade)]/20"
                     style={{ animationDelay: "160ms" }}
                   >
-                    先配置模型 API Key
+                    {t("app.empty.configBtn")}
                   </button>
                 )}
               </div>

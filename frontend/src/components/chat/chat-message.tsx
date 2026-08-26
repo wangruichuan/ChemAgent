@@ -6,6 +6,7 @@ import { ToolCallCard } from "@/components/chat/tool-call-card"
 import { SelectionActionsPopover, type SelectionAction } from "@/components/chat/selection-actions"
 import { RichContent } from "@/components/chat/chemvision-embed"
 import { cn } from "@/lib/utils"
+import { useT } from "@/lib/i18n"
 import type { ChatMessage } from "@/types"
 
 interface Props {
@@ -26,6 +27,7 @@ function KbHitsCard({
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState<number | null>(null)
   const listRef = useRef<HTMLDivElement>(null)
+  const t = useT()
 
   // 行内引用 chip 点击 → 展开本卡片、高亮并定位到对应编号来源（用 msgId 作作用域，避免串到别的消息）
   useEffect(() => {
@@ -51,9 +53,9 @@ function KbHitsCard({
         className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-muted/30"
       >
         <FileSearchIcon className="size-3.5 shrink-0 text-[var(--jade)]" />
-        <span className="text-xs font-medium text-foreground/80">参考来源 {hits.length} 条</span>
+        <span className="text-xs font-medium text-foreground/80">{t("kb.sources").replace("{count}", String(hits.length))}</span>
         <span className="ml-auto shrink-0 text-[10px] text-muted-foreground/50">
-          {open ? "收起" : "点击展开"}
+          {open ? t("kb.collapse") : t("kb.expand")}
         </span>
       </button>
       {open && (
@@ -75,7 +77,7 @@ function KbHitsCard({
                     {h.filename}
                   </span>
                   <span className="shrink-0 rounded bg-muted px-1.5 py-px font-mono text-[9px] text-muted-foreground/60">
-                    相似度 {(h.score * 100).toFixed(0)}%
+                    {t("kb.similarity").replace("{pct}", String((h.score * 100).toFixed(0)))}
                   </span>
                 </div>
                 <p className="mt-1 line-clamp-3 text-[11px] leading-relaxed text-muted-foreground/70">
@@ -96,6 +98,7 @@ function ReasoningBlock({ reasoning, streaming }: { reasoning: string; streaming
   const [elapsed, setElapsed] = useState(0)
   const [open, setOpen] = useState(false)
   const startRef = useRef<number | null>(null)
+  const t = useT()
 
   // 流式计时：记录开始时刻，结束用真实耗时
   useEffect(() => {
@@ -128,16 +131,18 @@ function ReasoningBlock({ reasoning, streaming }: { reasoning: string; streaming
         <SparklesIcon className="size-3.5 shrink-0 text-[var(--jade)]" />
         {thinking ? (
           <>
-            <span className="text-xs font-medium text-muted-foreground">正在思考…</span>
+            <span className="text-xs font-medium text-muted-foreground">{t("msg.thinking")}</span>
             <span className="ml-auto flex items-center gap-1.5 text-[11px] text-muted-foreground/50">
               <span className="size-1.5 animate-pulse rounded-full bg-[var(--jade)]" />
-              已 {seconds.toFixed(0)}s
+              {t("msg.secs").replace("{s}", seconds.toFixed(0))}
             </span>
           </>
         ) : (
           <>
-            <span className="text-xs font-medium text-foreground/80">深度思考</span>
-            <span className="text-[11px] text-muted-foreground/50">耗时 {seconds.toFixed(1)}s</span>
+            <span className="text-xs font-medium text-foreground/80">{t("msg.thought")}</span>
+            <span className="text-[11px] text-muted-foreground/50">
+              {t("msg.cost").replace("{s}", seconds.toFixed(1))}
+            </span>
             {canExpand && (
               <ChevronRightIcon
                 className={
@@ -164,6 +169,7 @@ export function ChatMessageItem({ message, streaming, onRetry }: Props) {
   const [copied, setCopied] = useState(false)
   const [sel, setSel] = useState<{ text: string; x: number; y: number } | null>(null)
   const isUser = message.role === "user"
+  const t = useT()
 
   // 选中文本 → 浮现 Selection Actions 浮动菜单
   const handleMouseUp = () => {
@@ -260,7 +266,7 @@ export function ChatMessageItem({ message, streaming, onRetry }: Props) {
           <div className="mt-2 flex items-center gap-0.5">
             <button
               onClick={copy}
-              title={copied ? "已复制" : "复制"}
+              title={copied ? t("common.copied") : t("common.copy")}
               className="flex size-6 cursor-pointer items-center justify-center rounded-md text-muted-foreground/50 transition-colors hover:bg-accent hover:text-foreground"
             >
               {copied ? <CheckIcon className="size-3" style={{ color: "var(--jade)" }} /> : <CopyIcon className="size-3" />}
@@ -268,7 +274,7 @@ export function ChatMessageItem({ message, streaming, onRetry }: Props) {
             {onRetry && (
               <button
                 onClick={onRetry}
-                title="重新生成"
+                title={t("msg.retry")}
                 className="flex size-6 cursor-pointer items-center justify-center rounded-md text-muted-foreground/50 transition-colors hover:bg-accent hover:text-foreground"
               >
                 <RefreshCwIcon className="size-3" />
@@ -285,10 +291,10 @@ export function ChatMessageItem({ message, streaming, onRetry }: Props) {
                 : "—"
               return (
                 <>
-                  <span>耗时 {(s.durationMs / 1000).toFixed(1)}s</span>
-                  <span>生成 {s.completionTokens} tokens</span>
-                  <span>速度 {speed} tok/s</span>
-                  {s.toolCalls > 0 && <span>工具 {s.toolCalls} 次</span>}
+                  <span>{t("msg.cost").replace("{s}", (s.durationMs / 1000).toFixed(1))}</span>
+                  <span>{t("msg.generated").replace("{n}", String(s.completionTokens))}</span>
+                  <span>{t("msg.speed").replace("{n}", speed)}</span>
+                  {s.toolCalls > 0 && <span>{t("msg.tools").replace("{n}", String(s.toolCalls))}</span>}
                 </>
               )
             })()}
