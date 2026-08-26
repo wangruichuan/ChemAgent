@@ -104,7 +104,7 @@ Output: `desktop/release/ChemAgent Setup <ver>.exe` (NSIS installer) and `win-un
 
 ## 📊 Project Stats
 
-[![Star History Chart](https://api.star-history.com/svg?repos=wangruichuan/ChemAgent&type=Date)](https://star-history.com/#wangruichuan/ChemAgent&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=wangruichuan%2Fchemagent&type=Date)](https://star-history.com/#wangruichuan/ChemAgent&Date)
 
 ## 🤝 Contributing
 

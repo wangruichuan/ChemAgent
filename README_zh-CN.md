@@ -102,7 +102,7 @@ node build.mjs --skip-frontend --skip-backend    # 只重打 Electron 壳
 
 ## 📊 项目统计
 
-[![Star History Chart](https://api.star-history.com/svg?repos=wangruichuan/ChemAgent&type=Date)](https://star-history.com/#wangruichuan/ChemAgent&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=wangruichuan%2Fchemagent&type=Date)](https://star-history.com/#wangruichuan/ChemAgent&Date)
 
 ## 🤝 参与贡献
 
