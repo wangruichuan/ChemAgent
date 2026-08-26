@@ -1,10 +1,8 @@
 <div align="center">
 
-# ⚗️ ChemAgent
+# ⚗️ ChemAgent · 化学科研智能体
 
-**AI Agent for Chemistry Research**
-
-A local-first AI assistant for chemistry research — chat, tool calling, knowledge base, and a skill system. One codebase, runs in browser and desktop.
+**面向化学科研场景的本地 AI Agent** —— 对话、工具调用、知识库、技能系统，一套代码跑浏览器与桌面。
 
 [![Stars](https://img.shields.io/github/stars/wangruichuan/ChemAgent?style=for-the-badge&logo=github&color=2e7d5b)](https://github.com/wangruichuan/ChemAgent/stargazers)
 [![Forks](https://img.shields.io/github/forks/wangruichuan/ChemAgent?style=for-the-badge&logo=github&color=2e7d5b)](https://github.com/wangruichuan/ChemAgent/forks)
@@ -33,86 +31,86 @@ A local-first AI assistant for chemistry research — chat, tool calling, knowle
 
 ---
 
-> 🧪 **A local-first AI Agent built for chemistry research**: not just a chatbot — it calls tools, searches a knowledge base, executes commands, and renders molecular structures.
+> 🧪 **面向化学科研场景的本地 AI Agent**：不只是聊天，而是会调用工具、检索知识库、执行命令、生成分子结构图的科研助手。
 
-## ✨ Features
+## ✨ 功能特性
 
-| | Capability | Description |
+| | 能力 | 说明 |
 |---|---|---|
-| 💬 | **AI Chat** | Streaming output, expandable reasoning traces, OpenAI-compatible APIs (DeepSeek / Qwen / OpenAI) |
-| 🛠️ | **Tool Calling** | File I/O, command execution, chemvision molecular visualization, skill system |
-| 📚 | **Knowledge Base** | Document ingestion → LLM cleaning → RAG retrieval with cited sources |
-| 🧩 | **Skill Management** | List / detail / translate skill descriptions, extensible custom skills |
-| 🗂️ | **Workspaces** | Local directory anchoring, artifact preview / execution / file reveal |
-| ✅ | **Human Approval** | Result gate for sensitive actions (write_file / run_command) — Approval Card |
-| 📝 | **Selection Actions** | Select text → explain / rewrite / summarize / follow-up |
-| 🎨 | **Dual Themes** | Light (default) + dark AI-native mode, one-click toggle with persistence |
-| 🖥️ | **Desktop App** | Electron shell + PyInstaller backend exe — no Python / Node required, Windows x64 |
+| 💬 | **AI 对话** | 流式输出、可展开思考流、OpenAI 兼容 API（DeepSeek / Qwen / OpenAI） |
+| 🛠️ | **工具调用** | 文件读写、执行命令、chemvision 分子结构可视化、技能系统 |
+| 📚 | **知识库** | 文档导入 → LLM 清洗 → RAG 检索引用，回答带来源角标 |
+| 🧩 | **技能管理** | 技能列表 / 详情 / 翻译简介，可扩展自定义技能 |
+| 🗂️ | **工作区** | 本地目录锚定，产物预览 / 执行 / 文件定位 |
+| ✅ | **人工确认** | 敏感操作（写文件 / 执行命令）结果查看闸（Approval Card） |
+| 📝 | **选中即问** | 拖选文本 → 解释 / 改写 / 总结 / 追问（Selection Actions） |
+| 🎨 | **双主题** | 浅色（默认）+ 暗色 AI-native 高级风，一键切换持久化 |
+| 🖥️ | **桌面版** | Electron 壳 + PyInstaller 后端 exe，免装 Python / Node，Windows x64 |
 
-## 🏗️ Architecture
+## 🏗️ 架构
 
 ```
 ┌───────────────┐   HTTP / SSE    ┌────────────────────────┐
-│  Frontend     │ ──────────────▶ │  Backend (FastAPI)     │
+│  前端 (React)  │ ──────────────▶ │  后端 (FastAPI)        │
 │  React 19     │     /api/*      │  + uvicorn :8000       │
-│  Tailwind 4   │                 │  + tools / KB / skills │
+│  Tailwind 4   │                 │  + 工具 / 知识库 / 技能 │
 └───────────────┘                 └────────────────────────┘
         ▲
-        │  Electron shell (desktop/): spawns backend exe,
-        │  preload exposes native capabilities (folder picker, etc.)
+        │  Electron 壳 (desktop/)：主进程拉起后端 exe，
+        │  preload 注入原生能力（目录选择等）
 ```
 
-| Directory | Description |
+| 目录 | 说明 |
 |---|---|
-| `backend/` | FastAPI + uvicorn; PyInstaller builds `chemagent-backend.exe` (bundles frontend dist, same-origin hosting) |
-| `frontend/` | React 19 + Vite + Tailwind CSS 4 + shadcn-style components |
-| `desktop/` | Electron shell + electron-builder packaging config |
+| `backend/` | FastAPI + uvicorn；PyInstaller 打包 exe（内置前端 dist，同源托管） |
+| `frontend/` | React 19 + Vite + Tailwind CSS 4 + shadcn 系组件 |
+| `desktop/` | Electron 壳 + electron-builder 打包配置 |
 
-## 🚀 Quick Start
+## 🚀 快速启动
 
-### Development
+### 开发模式
 
 ```bash
-# 1. Backend (port 8000)
+# 1. 后端（端口 8000）
 cd backend
 python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt      # Windows
 .venv\Scripts\uvicorn app.main:app --port 8000
 
-# 2. Frontend (port 5173, proxies /api → 8000)
+# 2. 前端（端口 5173，代理 /api → 8000）
 cd frontend
 npm install
 npm run dev        # http://localhost:5173
 ```
 
-> First run: open **Model Settings** (top-right) and enter your own LLM API Key (OpenAI-compatible — DeepSeek / Qwen / OpenAI).
+> 首次使用：右上角「模型设置」填入自己的 LLM API Key（OpenAI 兼容，DeepSeek / Qwen / OpenAI 均可）。
 
-### Desktop App
+### 桌面版
 
 ```bash
 cd desktop
 npm install
 npm run dev        # Electron + Vite dev
 
-node build.mjs                                   # Full build: frontend → backend exe → NSIS installer
-node build.mjs --skip-frontend --skip-backend    # Rebuild Electron shell only
+node build.mjs                                   # 全量打包：前端 → 后端 exe → NSIS 安装包
+node build.mjs --skip-frontend --skip-backend    # 只重打 Electron 壳
 ```
 
-Output: `desktop/release/ChemAgent Setup <ver>.exe` (NSIS installer) and `win-unpacked/` (portable).
+产物：`desktop/release/ChemAgent Setup <ver>.exe`（NSIS 安装包）与 `win-unpacked/`（便携版）。
 
-> Note: installer is unsigned — Windows SmartScreen may warn on first run; click **More info → Run anyway**.
+> 注：安装包未签名，Windows 首次运行会提示 SmartScreen，点「更多信息 → 仍要运行」即可。
 
-## 📊 Project Stats
+## 📊 项目统计
 
 [![Star History Chart](https://api.star-history.com/svg?repos=wangruichuan/ChemAgent&type=Date)](https://star-history.com/#wangruichuan/ChemAgent&Date)
 
-## 🤝 Contributing
+## 🤝 参与贡献
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feat/xxx`
-3. Commit your changes: `git commit -m "feat: ..."`
-4. Push: `git push origin feat/xxx`
-5. Open a Pull Request
+1. Fork 本仓库
+2. 创建特性分支：`git checkout -b feat/xxx`
+3. 提交改动：`git commit -m "feat: ..."`
+4. 推送：`git push origin feat/xxx`
+5. 发起 Pull Request
 
 ## 📄 License
 
