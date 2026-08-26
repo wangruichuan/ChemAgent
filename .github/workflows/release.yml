@@ -1,0 +1,49 @@
+name: Build & Release
+
+# 推送 v* 标签（如 v1.0.0）时自动构建并发布到 GitHub Releases
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install backend deps
+        shell: bash
+        run: |
+          cd backend
+          python -m venv .venv
+          ./.venv/Scripts/pip install -r requirements.txt pyinstaller
+
+      - name: Install frontend deps
+        shell: bash
+        run: cd frontend && npm ci
+
+      - name: Install desktop deps
+        shell: bash
+        run: cd desktop && npm ci
+
+      - name: Build (frontend + backend exe + electron installer)
+        shell: bash
+        run: cd desktop && node build.mjs
+
+      - name: Upload installer to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            desktop/release/ChemAgent Setup *.exe
+            desktop/release/ChemAgent Setup *.exe.blockmap
