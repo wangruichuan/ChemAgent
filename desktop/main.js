@@ -87,6 +87,24 @@ function startBackend(port) {
   return waitHealth(port);
 }
 
+// ---------- 窗口控制（IPC：自定义标题栏按钮） ----------
+ipcMain.handle("window:minimize", () => {
+  mainWindow?.minimize()
+})
+ipcMain.handle("window:toggleMaximize", () => {
+  if (!mainWindow) return false
+  if (mainWindow.isMaximized()) mainWindow.unmaximize()
+  else mainWindow.maximize()
+  return mainWindow.isMaximized()
+})
+ipcMain.handle("window:close", () => {
+  mainWindow?.close()
+})
+ipcMain.handle("window:isMaximized", () => !!mainWindow?.isMaximized())
+function emitMaximizedState() {
+  mainWindow?.webContents.send("window:maximized", mainWindow.isMaximized())
+}
+
 // ---------- 原生对话框（IPC） ----------
 ipcMain.handle("dialog:pickDirectory", async () => {
   const r = await dialog.showOpenDialog(mainWindow, {
@@ -106,13 +124,8 @@ function createWindow(url) {
     title: "ChemAgent",
     backgroundColor: "#faf9f6", // 默认浅色主题的窗口底色（加载后由前端 data-theme 接管）
     autoHideMenuBar: true,
-    // 精致标题栏：隐藏系统标题栏，用自定义渲染（前端顶栏承担拖拽区），原生窗口按钮着主题色
+    // 精致标题栏：隐藏系统标题栏 + 原生按钮（前端自己画，与应用完美融合）
     titleBarStyle: "hidden",
-    titleBarOverlay: {
-      color: "#faf9f6",
-      symbolColor: "#374151",
-      height: 48,
-    },
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -120,6 +133,9 @@ function createWindow(url) {
       sandbox: true,
     },
   });
+  // 监听 maximize / unmaximize，把状态推给渲染进程以切换按钮图标
+  mainWindow.on("maximize", emitMaximizedState)
+  mainWindow.on("unmaximize", emitMaximizedState)
   mainWindow.loadURL(url);
   mainWindow.on("closed", () => {
     mainWindow = null;

@@ -12,6 +12,7 @@ import { Sidebar } from "@/components/chat/sidebar"
 import { WorkspacePicker } from "@/components/chat/workspace-picker"
 import { SkillsPage } from "@/components/chat/skills-page"
 import { ArtifactPanel } from "@/components/chat/artifact-panel"
+import { TitleBarButtons } from "@/components/chat/title-bar-buttons"
 import { Button } from "@/components/ui/button"
 import { useChat } from "@/hooks/use-chat"
 import { useWorkspace } from "@/hooks/use-workspace"
@@ -137,8 +138,8 @@ export default function App() {
         key={chat.activeId}
         className="reveal relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border bg-card shadow-[var(--shadow-md)]"
       >
-        {/* 顶栏（Electron 下兼作窗口拖拽区；右侧预留原生窗口按钮空间） */}
-        <header className="app-drag flex h-12 shrink-0 items-center gap-2 border-b px-3 pr-36">
+        {/* 顶栏（Electron 下兼作窗口拖拽区；自定义窗口按钮嵌在最右，与背景无缝） */}
+        <header className="app-drag flex h-12 shrink-0 items-center gap-2 border-b px-3">
           <Button variant="ghost" size="icon-sm" onClick={() => setSidebarOpen((v) => !v)} className="app-no-drag">
             {sidebarOpen ? <PanelLeftCloseIcon className="size-4" /> : <PanelLeftOpenIcon className="size-4" />}
           </Button>
@@ -180,10 +181,11 @@ export default function App() {
             <Button variant="ghost" size="icon-sm" onClick={chat.createConversation} title="新任务">
               <SquarePenIcon className="size-4" />
             </Button>
-            <Button variant="ghost" size="icon-sm" onClick={() => setSettingsOpen(true)} title="设置">
+            <Button variant="ghost" size="icon-sm" onClick={() => setSettingsOpen(true)} title={t("sidebar.settings")}>
               <SettingsIcon className="size-4" />
             </Button>
           </div>
+          <TitleBarButtons className="app-no-drag" />
         </header>
 
         {/* 消息区 */}
