@@ -1,0 +1,47 @@
+{
+  "name": "chemagent-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ChemAgent 桌面版（Electron 壳 + 本地 FastAPI 后端）",
+  "main": "main.js",
+  "scripts": {
+    "dev": "electron . --dev",
+    "start": "electron .",
+    "dist": "electron-builder",
+    "build": "node build.mjs",
+    "build:quick": "node build.mjs --skip-frontend --skip-backend"
+  },
+  "build": {
+    "appId": "com.chemagent.desktop",
+    "productName": "ChemAgent",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "preload.js"
+    ],
+    "extraResources": [
+      {
+        "from": "C:\\Users\\wrc\\Desktop\\ChemAgent\\backend\\dist\\chemagent-backend",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false
+    }
+  },
+  "devDependencies": {
+    "electron": "^43.4.1",
+    "electron-builder": "^26.15.3"
+  }
+}

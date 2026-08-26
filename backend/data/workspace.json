@@ -1,0 +1,15 @@
+{
+  "current": "C:\\Users\\wrc\\Desktop\\dsh_test",
+  "workspaces": [
+    {
+      "id": "C:\\Users\\wrc\\Desktop\\ChemAgent",
+      "name": "ChemAgent",
+      "root": "C:\\Users\\wrc\\Desktop\\ChemAgent"
+    },
+    {
+      "id": "C:\\Users\\wrc\\Desktop\\dsh_test",
+      "name": "dsh",
+      "root": "C:\\Users\\wrc\\Desktop\\dsh_test"
+    }
+  ]
+}
