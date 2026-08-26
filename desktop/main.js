@@ -11,7 +11,7 @@
  * 安全基线：contextIsolation=true / nodeIntegration=false / sandbox=true，
  * 渲染进程与 Node 完全隔离，仅通过 HTTP 与本地后端交互（与浏览器版同模型）。
  */
-const { app, BrowserWindow, dialog, ipcMain, session } = require("electron");
+const { app, BrowserWindow, dialog, ipcMain, session, Menu } = require("electron");
 const { spawn } = require("child_process");
 const http = require("http");
 const net = require("net");
@@ -106,6 +106,13 @@ function createWindow(url) {
     title: "ChemAgent",
     backgroundColor: "#faf9f6", // 默认浅色主题的窗口底色（加载后由前端 data-theme 接管）
     autoHideMenuBar: true,
+    // 精致标题栏：隐藏系统标题栏，用自定义渲染（前端顶栏承担拖拽区），原生窗口按钮着主题色
+    titleBarStyle: "hidden",
+    titleBarOverlay: {
+      color: "#faf9f6",
+      symbolColor: "#374151",
+      height: 48,
+    },
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -133,6 +140,8 @@ if (!gotLock) {
 
   app.whenReady().then(async () => {
     try {
+      // 移除 Electron 默认菜单（File/Edit/View…），UI 更干净
+      Menu.setApplicationMenu(null);
       // 清 HTTP 磁盘缓存：本地后端每次发版 hash 都会变，缓存旧页面会导致永远看不到新版 UI
       await session.defaultSession.clearCache();
       const port = await getFreePort(BACKEND_PORT_START);

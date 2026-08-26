@@ -221,6 +221,13 @@
     font-family: var(--font-display);
     font-optical-sizing: auto;
   }
+  /* Electron 自定义标题栏：顶栏可拖拽区 / 交互元素禁拖 */
+  .app-drag {
+    -webkit-app-region: drag;
+  }
+  .app-no-drag {
+    -webkit-app-region: no-drag;
+  }
   /* 玻璃表面：随主题 */
   .glass {
     background: var(--glass-bg);

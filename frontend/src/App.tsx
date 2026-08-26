@@ -137,12 +137,13 @@ export default function App() {
         key={chat.activeId}
         className="reveal relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border bg-card shadow-[var(--shadow-md)]"
       >
-        {/* 顶栏 */}
-        <header className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
-          <Button variant="ghost" size="icon-sm" onClick={() => setSidebarOpen((v) => !v)}>
+        {/* 顶栏（Electron 下兼作窗口拖拽区；右侧预留原生窗口按钮空间） */}
+        <header className="app-drag flex h-12 shrink-0 items-center gap-2 border-b px-3 pr-36">
+          <Button variant="ghost" size="icon-sm" onClick={() => setSidebarOpen((v) => !v)} className="app-no-drag">
             {sidebarOpen ? <PanelLeftCloseIcon className="size-4" /> : <PanelLeftOpenIcon className="size-4" />}
           </Button>
           <div className="h-4 w-px shrink-0 bg-border" />
+          <div className="app-no-drag">
           <WorkspacePicker
             ws={workspace.ws}
             loading={workspace.loading}
@@ -152,18 +153,19 @@ export default function App() {
             onAdd={workspace.addWorkspace}
             onPick={workspace.pickDirectory}
           />
+          </div>
           <div className="flex min-w-0 items-center gap-2">
             <span className="truncate text-sm font-medium leading-none">
-              {chat.activeConversation?.title ?? "新任务"}
+              {chat.activeConversation?.title ?? t("sidebar.newTask")}
             </span>
             {chat.isStreaming && (
               <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--jade)]/25 bg-[var(--jade-soft)] px-2 py-0.5 text-[10px] leading-none text-muted-foreground">
                 <span className="inline-block size-1.5 shrink-0 animate-pulse rounded-full bg-[var(--jade)]" />
-                {thinking ? "思考中" : "生成中"}
+                {thinking ? t("msg.thinking") : t("input.generating")}
               </span>
             )}
           </div>
-          <div className="ml-auto flex items-center gap-1">
+          <div className="app-no-drag ml-auto flex items-center gap-1">
             {workspaceId !== "" && (
               <Button
                 variant="ghost"
